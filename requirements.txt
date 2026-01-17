@@ -1,0 +1,26 @@
+# CodeGuardian 核心依赖 - LangGraph/LangChain 代码迁移审计栈
+langchain>=0.2.0,<0.3.0
+langgraph>=0.1.0,<0.2.0
+langchain-community>=0.2.0
+
+# 向量数据库（代码审计/语义分析必需）
+chromadb>=0.5.0
+faiss-cpu>=1.8.0.post1
+
+# 网络/异步工具
+aiohttp>=3.9.0
+requests>=2.31.0
+
+# 数据校验/格式化
+pydantic>=2.7.0
+python-dotenv>=1.0.0
+
+# LangServe 代码迁移服务部署
+fastapi>=0.111.0
+uvicorn>=0.30.0
+langserve>=0.2.0
+
+# 开发/测试规范工具
+pytest>=7.4.0
+black>=24.4.0
+flake8>=7.0.0

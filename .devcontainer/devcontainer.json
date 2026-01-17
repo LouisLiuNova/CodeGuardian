@@ -1,0 +1,61 @@
+{
+  "name": "CodeGuardianDev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "installTools": true,
+      "version": "3.14.2"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.flake8",
+        "rangav.vscode-thunder-client",
+        "GitHub.copilot",
+        "eamodio.gitlens",
+        "redhat.vscode-json",
+        "tamasfe.even-better-toml"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspaces/CodeGuardian/.venv/bin/python",
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.autoImportCompletions": true,
+        "editor.formatOnSave": true,
+        "editor.rulers": [88],
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/.pytest_cache": true,
+          "**/chroma": true,
+          "**/.venv": true
+        }
+      }
+    }
+  },
+  // ✅ 核心新增：容器创建后，用uv极速创建虚拟环境+安装依赖（秒级完成）
+  "postCreateCommand": "uv venv .venv && . .venv/bin/activate && uv pip install --upgrade pip && uv pip install -r requirements.txt",
+  // 纯净环境变量，仅保留Python核心配置，无任何大模型相关变量
+  "remoteEnv": {
+    "PYTHONIOENCODING": "utf-8",
+    "PYTHONPATH": "${containerWorkspaceFolder}"
+  },
+  // 仅转发CodeGuardian核心端口：LangServe API 8000
+  "forwardPorts": [8000],
+  // 持久化存储：pip缓存 + Chroma向量库，无冗余挂载
+  "mounts": [
+    "source=codeguardian-pip-cache,target=/usr/local/pip-cache,type=volume",
+    "source=codeguardian-chroma-data,target=/workspaces/CodeGuardian/chroma,type=volume"
+  ],
+  "runArgs": ["--shm-size=2g"],
+  "workspaceFolder": "/workspaces/CodeGuardian",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/CodeGuardian,type=bind,consistency=cached"
+}
